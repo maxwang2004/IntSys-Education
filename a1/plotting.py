@@ -74,7 +74,7 @@ def plot_grad_descent_1d(h, grad_h, loss, dloss, x, y, grad_des,
 
         # Update the plot
         scat.set_offsets([[theta, loss_val]])
-        text.set_text("Loss Value : {:.2f} Theta Value : {:.2f}".format(loss_val, theta[0, 0]))
+        text.set_text("Loss Value : {:.2f} Theta Value : {:.2f}".format(loss_val, theta[0]))
         line.set_data(potential_theta, potential_loss)
         return line, scat, text
 
@@ -154,7 +154,7 @@ def plot_linear_1d(h, grad_h, loss, dloss, x, y, grad_des, x_support, y_support)
         preds = h(theta, x_range.reshape((-1, 1)))
 
         # Update the plot
-        text.set_text("Theta Value : {:.2f}".format(theta[0, 0]))
+        text.set_text("Theta Value : {:.2f}".format(theta[0]))
         line.set_data(x_range, preds.reshape((-1,)))
         return line, scat, text
 
