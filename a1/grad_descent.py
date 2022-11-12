@@ -221,8 +221,9 @@ def grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     :rtype: tuple[np.ndarray, np.ndarray]
     """
 
-    loss_history = np.zeros(20)
-    theta_history = np.zeros((20, x.shape[1])) 
+    iter = 20
+    loss_history = np.zeros(iter)
+    theta_history = np.zeros((iter, x.shape[1])) 
 
     theta = np.random.randn(1, x.shape[1])
     
@@ -233,7 +234,7 @@ def grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     #print('___________'+ str(theta.size) + ' ' + str(x.size) + ' ' + str(y.size))
     
 
-    for i in range(20): # number of training iterations? 
+    for i in range(iter): # number of training iterations? 
         #for j in range(x.shape[0])
         
         prediction = h(theta, x)
@@ -305,8 +306,9 @@ def stochastic_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     """
 
     # TODO 2
-    loss_history = np.zeros(20) #hard coded for testing, can replace with steps param 
-    theta_history = np.zeros((20, x.shape[1])) 
+    iter = 20
+    loss_history = np.zeros(iter) #hard coded for testing, can replace with steps param 
+    theta_history = np.zeros((iter, x.shape[1])) 
 
     theta = np.random.randn(1, x.shape[1])
     
@@ -316,7 +318,8 @@ def stochastic_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
 
     #print('___________'+ str(theta.size) + ' ' + str(x.size) + ' ' + str(y.size))
 
-    for i in range(20): # number of training iterations? 
+    
+    for i in range(iter): # number of training iterations? 
         #for j in range(x.shape[0])
         
         prediction = h(theta, x)
@@ -378,10 +381,11 @@ def minibatch_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     :rtype: tuple[np.ndarray, np.ndarray]
     """
 
+    iter = 40 #should write this to steps
     # TODO 3: Write the stochastic mini-batch gradient descent algorithm without 
     # matrix operations or numpy vectorization
-    loss_history = np.zeros(20) #hard coded for testing, can replace with steps param 
-    theta_history = np.zeros((20, x.shape[1])) 
+    loss_history = np.zeros(iter) #hard coded for testing, can replace with steps param 
+    theta_history = np.zeros((iter, x.shape[1])) 
 
     theta = np.random.randn(1, x.shape[1])
     
@@ -391,7 +395,7 @@ def minibatch_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
 
     #print('___________'+ str(theta.size) + ' ' + str(x.size) + ' ' + str(y.size))
 
-    for i in range(20): # number of training iterations? 
+    for i in range(iter): # number of training iterations? 
         #for j in range(x.shape[0])
         
         prediction = h(theta, x)
@@ -411,13 +415,18 @@ def minibatch_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
                     
             
         theta_history[i, : ] = theta.T #transposes theta array
-        #loss_history[i] = loss_f(h, grad_h, theta, x, y)
+        loss_history[i] = loss_f(h, grad_h, theta, x, y)
 
         #print("grad loss for it " + str(i) + str(grad_loss_f(h, grad_h, theta, x, y))) 
 
         
-    print("SGD test")
+    print("SGD minibatch test")
     print(loss_history)
+    print("__________")
+    print(theta)
+    print("__________")
+    print(theta_history)
+
     return (theta, theta_history)
 
 
@@ -606,12 +615,12 @@ def test_gd(grad_des_f):
 if __name__ == "__main__":
     x = np.arange(-3, 4, 0.1).reshape((-1, 1))
     y = 2*np.arange(-3, 4, 0.1).reshape((-1, 1))
-    print(minibatch_grad_descent(linear_h,
+    minibatch_grad_descent(linear_h,
         linear_grad_h,
         l2_loss,
         grad_l2_loss,
          x,
-         y, 20)) 
+         y, 20)
     
     #save_linear_gif()
 
