@@ -244,7 +244,7 @@ def grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
 
         theta = theta - 0.0001 * grad_loss_f(h, grad_h, theta, x, y)
 
-        print("grad loss for it " + str(i) + str(grad_loss_f(h, grad_h, theta, x, y))) 
+        #print("grad loss for it " + str(i) + str(grad_loss_f(h, grad_h, theta, x, y))) 
 
         theta_history[i, : ] = theta.T #transposes theta array
     
@@ -258,7 +258,7 @@ def grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     # return np.zeros((1,))
 
 
-    print(loss_history)
+    #print(loss_history)
     return (theta, theta_history)
 
     
@@ -305,7 +305,37 @@ def stochastic_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     """
 
     # TODO 2
-    return np.zeros((1,))
+    loss_history = np.zeros(20) #hard coded for testing, can replace with steps param 
+    theta_history = np.zeros((20, x.shape[1])) 
+
+    theta = np.random.randn(1, x.shape[1])
+    
+    # print("______" + str(x.shape))
+    # print("______" + str(y.shape))
+    # print("______" + str(theta.shape))
+
+    #print('___________'+ str(theta.size) + ' ' + str(x.size) + ' ' + str(y.size))
+
+    for i in range(20): # number of training iterations? 
+        #for j in range(x.shape[0])
+        
+        prediction = h(theta, x)
+        #print(i)
+        #print (prediction.shape) 
+        #print("______" + str(grad_loss_f(h, grad_h, theta, x, y).shape))
+
+        j = np.random.randint(0, x.shape[0], 1)
+        theta = theta - 0.001 * grad_loss_f(h, grad_h, theta, x[j], y[j])
+
+        #print("grad loss for it " + str(i) + str(grad_loss_f(h, grad_h, theta, x, y))) 
+
+        theta_history[i, : ] = theta.T #transposes theta array
+    
+        loss_history[i] = loss_f(h, grad_h, theta, x, y)
+        
+    print("SGD test")
+    print(loss_history)
+    return (theta, theta_history)
 
 
 def minibatch_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
@@ -538,7 +568,7 @@ def test_gd(grad_des_f):
 if __name__ == "__main__":
     x = np.arange(-3, 4, 0.1).reshape((-1, 1))
     y = 2*np.arange(-3, 4, 0.1).reshape((-1, 1))
-    print(grad_descent(linear_h,
+    print(stochastic_grad_descent(linear_h,
         linear_grad_h,
         l2_loss,
         grad_l2_loss,
