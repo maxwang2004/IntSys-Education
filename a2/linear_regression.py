@@ -16,8 +16,10 @@ class LinearRegressionModel(nn.Module):
 
     def __init__(self, num_param):
         ## TODO 1: Set up network
-        super().__init__()
-        pass
+        super(LinearRegressionModel, self).__init__()
+        self.linear = torch.nn.linear(num_param, num_param) #what is number of outputs? 1
+        #pass
+        
 
     def forward(self, x):
         """forward generates the predictions for the input
@@ -38,7 +40,9 @@ class LinearRegressionModel(nn.Module):
         :rtype: torch.Tensor
         """
         ## TODO 2: Implement the linear regression on sample x
-        pass
+        out = self.linear(x)
+        return out
+        #pass
 
 
 def data_transform(sample):
@@ -73,6 +77,15 @@ def mse_loss(output, target):
     """
     ## TODO 3: Implement Mean-Squared Error loss. 
     # Use PyTorch operations to return a PyTorch tensor
+    #target.sub(output)
+    # for i, x in enumerate(output.shape[]):
+    #     for i, x in enumerate(output.numpy()):
+            
+    #     target.sub(output)
+
+
+    loss = nn.mse_loss()
+    return loss(output, target) # ... :>? 
     pass
 
 
@@ -100,6 +113,9 @@ def mae_loss(output, target):
     """
     ## TODO 4: Implement L1 loss. Use PyTorch operations.
     # Use PyTorch operations to return a PyTorch tensor.
+    loss = torch.nn.l1
+    return loss(output, target) # ... :< 
+
     pass
 
 
@@ -108,10 +124,10 @@ if __name__ == "__main__":
     ## you think you should use Linear Regression. The syntax for doing this is something like:
     # Eg:
     # train_loader, val_loader, test_loader =\
-    #   get_data_loaders(path_to_csv, 
-    #                    transform_fn=data_transform  # Can also pass in None here
-    #                    train_val_test=[YOUR TRAIN/VAL/TEST SPLIT], 
-    #                    batch_size=YOUR BATCH SIZE)
+    #    get_data_loaders(path_to_csv, 
+    #                     transform_fn=data_transform  # Can also pass in None here
+    #                     train_val_test=[YOUR TRAIN/VAL/TEST SPLIT], 
+    #                     batch_size=YOUR BATCH SIZE)
 
     ## Now you will want to initialise your Linear Regression model, using something like
     # Eg:
