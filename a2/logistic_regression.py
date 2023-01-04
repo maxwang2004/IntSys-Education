@@ -17,7 +17,11 @@ class LogisticRegressionModel(nn.Module):
     """
     def __init__(self, num_param):
         ## TODO 1: Set up network
-        super().__init__()
+        super(LogisticRegressionModel, self).__init__()
+        self.linear = torch.nn.linear(num_param, 1)
+
+        self.Sigmoid = torch.nn.Sigmoid() # check valid input
+
         pass
 
     def forward(self, x):
@@ -40,6 +44,9 @@ class LogisticRegressionModel(nn.Module):
         """
 
         ## TODO 2: Implement the logistic regression on sample x
+        out = self.linear(x)
+        out = self.Sigmoid(out)
+        return out
         pass
 
 
@@ -107,7 +114,12 @@ def logistic_loss(output, target):
     """
     # TODO 2: Implement the logistic loss function from the slides using
     # pytorch operations
-    return 0
+    first = torch.neg(torch.mul(target, torch.log10(output))
+    second = torch.mul(torch.sub(1, target)  , torch.log10(output) )
+    loss = torch.neg( first, second )
+
+
+    return loss
 
 
 def cross_entropy_loss(output, target):
@@ -130,4 +142,5 @@ def cross_entropy_loss(output, target):
 if __name__ == "__main__":
     # TODO: Run a sample here
     # Look at linear_regression.py for a hint on how you should do this!!
-    pass
+
+    #pass
