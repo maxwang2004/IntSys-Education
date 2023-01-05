@@ -2,6 +2,7 @@ import csv
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, SubsetRandomSampler
 import pandas as pd
+import torch
 
 
 class SimpleDataset(Dataset):
@@ -16,7 +17,6 @@ class SimpleDataset(Dataset):
         ## TODO: Add code to read csv and load data. 
         ## You should store the data in a field.
         # Eg (on how to read .csv files):
-
         # self.dataset = {}
         # with open('path/to/.csv', 'r') as f:
         #    csvreader = csv.reader(f)
@@ -29,7 +29,7 @@ class SimpleDataset(Dataset):
         ## Look up how to read .csv files using Python. This is common for datasets in projects.
         
         #or use this? 
-        self.dataset = pd.read_csv(path_to_csv)
+        self.dataset = pd.read_csv(path_to_csv, header = None, names = ['x','y','z'])
 
         #checkout pytorch data loaders
 
@@ -42,7 +42,7 @@ class SimpleDataset(Dataset):
         [extended_summary]
         """
         ## TODO: Returns the length of the dataset.
-        return len(self.dataset)
+        return len(self.dataset)-1
         #pass
 
     def __getitem__(self, index):
@@ -59,15 +59,22 @@ class SimpleDataset(Dataset):
         ## Before returning your sample, you should check if there is a transform
         ## sepcified, and pply that transform to your sample
         # Eg:
-        x = dataset.iloc[index, 0]
-        y = dataset.iloc[index, 1]
+        train_x = self.dataset['x']
+        train_y = self.dataset['y']
+
+        train_x = torch.tensor(train_x.values)
+        train_y = torch.tensor(train_y.values)
+
+        sample = (train_x.iloc[index],train_y.iloc[index])
+
+
         if self.transform:
            sample = self.transform(sample)
-        return x, y
+
+        return (sample)
         ## Remember to convert the x and y into torch tensors.
         #how do i do this? 
-        
-
+    
        # pass
 
 
@@ -100,6 +107,7 @@ def get_data_loaders(path_to_csv,
 
     ## BEGIN: YOUR CODE
     #0.7*dataset_size
+    
     train_indices = []
     val_indices = []
     test_indices = []
