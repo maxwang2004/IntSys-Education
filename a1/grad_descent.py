@@ -21,12 +21,6 @@ def linear_h(theta, x):
     :return: The predictions of our model on inputs X; shape (samples, 1)
     :rtype: np.ndarray
     """
-    # print("_____________")
-    # print(theta.shape)
-    # print(x.shape)
-    # print("_____________")
-
-
     return (theta @ x.T).T
 
 
@@ -220,7 +214,7 @@ def grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     :return: Ideal weights of shape (1, features), and the list of weights through time
     :rtype: tuple[np.ndarray, np.ndarray]
     """
-        # TODO 1: Write the traditional gradient descent algorithm without matrix
+    # TODO 1: Write the traditional gradient descent algorithm without matrix
     # operations or numpy vectorization
     # return np.zeros((1,))
 
@@ -243,7 +237,7 @@ def grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     #print('___________'+ str(theta.size) + ' ' + str(x.size) + ' ' + str(y.size))
     
     for i in range(20): # number of training iterations? 
-        
+
         prediction = h(theta, x)
         print('________')
         #print('x size: ' + str(x.size))
@@ -271,7 +265,6 @@ def grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
     # return np.zeros((1,))
 
     return (theta, theta_history)
-    
 
 
 def stochastic_grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps):
@@ -475,9 +468,6 @@ def matrix_gd(h, grad_h, loss_f, grad_loss_f, x, y, steps, batch_size):
 
     # TODO 4: Write the traditional gradient descent algorithm WITH matrix
     # operations or numpy vectorization
-
-
-
     return np.zeros((1,))
 
 
@@ -577,50 +567,33 @@ def matrix_minibatch_gd(h, grad_h, loss_f, grad_loss_f, x, y, steps, batch_size)
 # Sample tests that you can run to ensure the basics are working
 # ============================================================================
 
-
-
 def save_linear_gif():
     """simple_linear: description."""
     x = np.arange(-3, 4, 0.1).reshape((-1, 1))
     y = 2*np.arange(-3, 4, 0.1).reshape((-1, 1))
     x_support = np.array((0, 4))
     y_support = np.array((-0.1, 200))
-    plot_linear_1d(
-        linear_h,
-        linear_grad_h,
-        l2_loss,
-        grad_l2_loss,
-        x,
-        y,
-        grad_descent,
-        x_support,
-        y_support
-    )
-    plot_grad_descent_1d(
-        linear_h,
-        linear_grad_h,
-        l2_loss,
-        grad_l2_loss,
-        x,
-        y,
-        grad_descent,
-        x_support,
-        y_support
-    )
+
+    plot_linear_1d(linear_h, linear_grad_h, l2_loss, grad_l2_loss, x,
+        y, grad_descent, x_support, y_support)
+
+    plot_grad_descent_1d(linear_h, linear_grad_h, l2_loss, grad_l2_loss,
+        x, y, grad_descent, x_support, y_support)
 
 
-def test_gd(grad_des_f):
-    pass
-
-
-if __name__ == "__main__":
+def test_gd(grad_descent):
+    h = linear_h
+    grad_h = linear_grad_h
+    loss_f = l2_loss
+    grad_loss_f = grad_l2_loss
     x = np.arange(-3, 4, 0.1).reshape((-1, 1))
     y = 2*np.arange(-3, 4, 0.1).reshape((-1, 1))
-    print(stochastic_grad_descent(linear_h,
-        linear_grad_h,
-        l2_loss,
-        grad_l2_loss,
-         x,
-         y, 20)) 
-    
-    #save_linear_gif()
+    steps = 100
+
+    grad_descent(h, grad_h, loss_f, grad_loss_f, x, y, steps)
+    pass
+
+test_gd(minibatch_grad_descent)
+
+# if __name__ == "__main__":
+#     save_linear_gif()
