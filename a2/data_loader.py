@@ -59,14 +59,14 @@ class SimpleDataset(Dataset):
         ## Before returning your sample, you should check if there is a transform
         ## sepcified, and pply that transform to your sample
         # Eg:
-        train_x = self.dataset['x']
-        train_y = self.dataset['y']
+        train_x = self.dataset['x'][index]
+        train_y = self.dataset['y'][index]
 
         train_x = torch.tensor(train_x.values)
         train_y = torch.tensor(train_y.values)
 
-        sample = (train_x.iloc[index],train_y.iloc[index])
-
+        sample = (train_x,train_y)
+        
 
         if self.transform:
            sample = self.transform(sample)
@@ -107,7 +107,7 @@ def get_data_loaders(path_to_csv,
 
     ## BEGIN: YOUR CODE
     #0.7*dataset_size
-    
+
     train_indices = []
     val_indices = []
     test_indices = []
