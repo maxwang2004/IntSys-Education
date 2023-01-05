@@ -66,7 +66,7 @@ class SimpleDataset(Dataset):
         train_y = torch.tensor(train_y.values)
 
         sample = (train_x,train_y)
-        
+
 
         if self.transform:
            sample = self.transform(sample)
@@ -106,16 +106,13 @@ def get_data_loaders(path_to_csv,
     ## are formed.
 
     ## BEGIN: YOUR CODE
-    #0.7*dataset_size
+    train_num = round(train_val_test[0]*dataset_size) # not sure if this is accurate though lol
+    valid_num = round(train_val_test[1]*dataset_size)
+    test_num = round(train_val_test[2]*dataset_size)
 
-    train_indices = []
-    val_indices = []
-    test_indices = []
-    
-    for i in range(train_val_test[0]*dataset_size):
-        train_indices.append(i)
-    # is this right? 
-
+    train_indices = dataset[:train_num]
+    val_indices = dataset[train_num:valid_num]
+    test_indices = dataset[valid_num:test_num]
 
 
     ## END: YOUR CODE
