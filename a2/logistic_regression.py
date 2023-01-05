@@ -5,19 +5,22 @@ import torch.nn.functional as F
 import numpy as np
 from data_loader import get_data_loaders
 import typing
+import matplotlib as plt
 
 
 class LogisticRegressionModel(nn.Module):
     """LogisticRegressionModel is the logistic regression classifier.
-
     This class handles only the binary classification task.
-
     :param num_param: The number of parameters that need to be initialized.
     :type num_param: int
     """
     def __init__(self, num_param):
         ## TODO 1: Set up network
-        super().__init__()
+        super(LogisticRegressionModel, self).__init__()
+        self.linear = torch.nn.linear(num_param, 1)
+
+        self.Sigmoid = torch.nn.Sigmoid() # check valid input
+
         pass
 
     def forward(self, x):
@@ -28,7 +31,6 @@ class LogisticRegressionModel(nn.Module):
         
         .. highlight:: python
         .. code-block:: python
-
             model = LogisticRegressionModel(1, logistic_loss)
             predictions = model(X)
     
@@ -40,26 +42,27 @@ class LogisticRegressionModel(nn.Module):
         """
 
         ## TODO 2: Implement the logistic regression on sample x
+        out = self.linear(x)
+        out = self.Sigmoid(out)
+        return out
         pass
 
 
 class MultinomialRegressionModel(nn.Module):
     """MultinomialRegressionModel is logistic regression for multiclass prob.
-
     This model operates under a one-vs-rest (OvR) scheme for its predictions.
-
     :param num_param: The number of parameters that need to be initialized.
     :type num_param: int
     :param loss_fn: The loss function that is used to calculate "cost"
     :type loss_fn: typing.Callable[[torch.Tensor, torch.Tensor],torch.Tensor]
-
     .. seealso:: :class:`LogisticRegressionModel`
     """
     def __init__(self, num_param, loss_fn):
         super().__init__()
         ## TODO 3: Set up network
         # NOTE: THIS IS A BONUS AND IS NOT EXPECTED FOR YOU TO BE ABLE TO DO
-        pass
+        self.linear = torch.Linear()
+        self.Sigmoid = torch.Sigmoid()
 
     def forward(self, x):
         """forward generates the predictions for the input
@@ -69,10 +72,9 @@ class MultinomialRegressionModel(nn.Module):
         
         .. highlight:: python
         .. code-block:: python
-
             model = MultinomialRegressionModel(1, cross_entropy_loss)
             predictions = model(X)
-    
+
         :param x: Input array of shape (n_samples, n_features) which we want to
             evaluate on
         :type x: typing.Union[np.ndarray, torch.Tensor]
@@ -87,17 +89,12 @@ class MultinomialRegressionModel(nn.Module):
 def logistic_loss(output, target):
     """Creates a criterion that measures the Binary Cross Entropy
     between the target and the output:
-
     The loss can be described as:
-
     .. math::
         \\ell(x, y) = L = \\operatorname{mean}(\\{l_1,\dots,l_N\\}^\\top), \\quad
         l_n = -y_n \\cdot \\log x_n - (1 - y_n) \\cdot \\log (1 - x_n),
-
     where :math:`N` is the batch size.
-
     Note that the targets :math:`target` should be numbers between 0 and 1.
-
     :param output: The output of the model or our predictions
     :type output: torch.Tensor
     :param target: The expected output or our labels
@@ -107,7 +104,10 @@ def logistic_loss(output, target):
     """
     # TODO 2: Implement the logistic loss function from the slides using
     # pytorch operations
-    return 0
+    first = torch.neg(torch.mul(target, torch.log10(output)))
+    second = torch.mul(torch.sub(1, target), torch.log10(output))
+    loss = torch.neg(first, second)
+    return loss
 
 
 def cross_entropy_loss(output, target):
@@ -115,7 +115,6 @@ def cross_entropy_loss(output, target):
     between the target and the output:
     
     It is useful when training a classification problem with `C` classes.
-
     :param output: The output of the model or our predictions
     :type output: torch.Tensor
     :param target: The expected output or our labels
@@ -130,4 +129,5 @@ def cross_entropy_loss(output, target):
 if __name__ == "__main__":
     # TODO: Run a sample here
     # Look at linear_regression.py for a hint on how you should do this!!
+
     pass
