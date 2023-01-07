@@ -59,11 +59,24 @@ class SimpleDataset(Dataset):
         ## Before returning your sample, you should check if there is a transform
         ## sepcified, and pply that transform to your sample
         # Eg:
-        x = dataset.iloc[index, 0]
-        y = dataset.iloc[index, 1]
+        #this?
+       
+       #changed using iloc, I didn't add a header to the dataset so I think it uses row number
+        train_x = self.dataset.iloc[index, 0]
+        train_y = self.dataset.iloc[index, 1]
+
+        # train_x = self.dataset['x'][index]
+        # train_y = self.dataset['y'][index]
+
+        train_x = torch.tensor(train_x.values)
+        train_y = torch.tensor(train_y.values)
+
+        sample = (train_x,train_y)
+
+
          if self.transform:
            sample = self.transform(sample)
-        return x, y
+        return sample
         ## Remember to convert the x and y into torch tensors.
         #how do i do this? 
         
@@ -99,14 +112,17 @@ def get_data_loaders(path_to_csv,
     ## are formed.
 
     ## BEGIN: YOUR CODE
-    #0.7*dataset_size
-    train_indices = []
-    val_indices = []
-    test_indices = []
     
-    for i in range(train_val_test[0]*dataset_size):
-        train_indices.append(i)
-    # is this right? 
+    #ex. size == 100, train num = 80, test num = 20, val num = 4
+    train_num = round(train_val_test[0]*dataset_size) # not sure if this is accurate though lol - yea lol idk either shouldnt it be random?
+    test_num = round(train_val_test[1]*dataset_size) # in example this would be 0.2 * size
+    val_num = round(train_val_test[2]*test_num) #
+
+
+    train_indices = dataset[test_num:]
+    val_indices = dataset[:val_num]
+    test_indices = dataset[val_num:test_num]
+    # changed – is this right? I based it on the example I defined
 
 
 
