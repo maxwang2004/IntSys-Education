@@ -100,7 +100,6 @@ def get_data_loaders(path_to_csv,
     # Then, we create a list of indices for all samples in the dataset.
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
-    indices = list(range)
 
     ## TODO: Rewrite this section so that the indices for each dataset split
     ## are formed.
