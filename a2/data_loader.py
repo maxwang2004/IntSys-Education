@@ -29,7 +29,7 @@ class SimpleDataset(Dataset):
         ## Look up how to read .csv files using Python. This is common for datasets in projects.
         
         #or use this? 
-        self.dataset = pd.read_csv(path_to_csv, header = None, names = ['x','y','z'])
+        self.dataset = pd.read_csv(path_to_csv, header = None, names = ['x1','x2','y'])
 
         #checkout pytorch data loaders
 
@@ -59,21 +59,20 @@ class SimpleDataset(Dataset):
         ## Before returning your sample, you should check if there is a transform
         ## sepcified, and pply that transform to your sample
         # Eg:
-        train_x = self.dataset['x'][index]
-        train_y = self.dataset['y'][index]
+        train_x = self.dataset.iloc[index][:2] 
+        train_y = self.dataset.iloc[index][1:2]
+        #fixed based on feedback
 
         train_x = torch.tensor(train_x.values)
         train_y = torch.tensor(train_y.values)
 
         sample = (train_x,train_y)
 
-
         if self.transform:
            sample = self.transform(sample)
-
+        
         return (sample)
         ## Remember to convert the x and y into torch tensors.
-        #how do i do this? 
     
        # pass
 
@@ -101,18 +100,26 @@ def get_data_loaders(path_to_csv,
     # Then, we create a list of indices for all samples in the dataset.
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
+    indices = list(range)
 
     ## TODO: Rewrite this section so that the indices for each dataset split
     ## are formed.
 
     ## BEGIN: YOUR CODE
-    train_num = round(train_val_test[0]*dataset_size) # not sure if this is accurate though lol
-    valid_num = round(train_val_test[1]*dataset_size)
-    test_num = round(train_val_test[2]*dataset_size)
+    
+    ## Travis's comment: U want to first get a train_test_split by retrieving the indices 
+    ## for train and indices for test. And then from there within the train indices, retrieve 
+    ## a portion of it for val
+    
+    train_num = round(train_val_test[0]*dataset_size) 
+    test_num = round(train_val_test[1]*dataset_size)
+    valid_num = round(train_val_test[2]*train_num) # fixed, but not sure
 
-    train_indices = dataset[:train_num]
-    val_indices = dataset[train_num:valid_num]
-    test_indices = dataset[valid_num:test_num]
+    train_indices = indices[:train_num]
+    test_indices = indices[-test_num:]
+    val_indices = train_indices[-valid_num:] #not sure
+
+    
 
 
     ## END: YOUR CODE
