@@ -62,8 +62,8 @@ class SimpleDataset(Dataset):
         #this?
        
        #changed using iloc, I didn't add a header to the dataset so I think it uses row number
-        train_x = self.dataset.iloc[index, 0]
-        train_y = self.dataset.iloc[index, 1]
+        train_x = self.dataset.iloc[index, 0:2]
+        train_y = self.dataset.iloc[index, 2]
 
         # train_x = self.dataset['x'][index]
         # train_y = self.dataset['y'][index]
@@ -72,10 +72,9 @@ class SimpleDataset(Dataset):
         train_y = torch.tensor(train_y.values)
 
         sample = (train_x,train_y)
+        if self.transform:
+            sample = self.transform(sample)
 
-
-         if self.transform:
-           sample = self.transform(sample)
         return sample
         ## Remember to convert the x and y into torch tensors.
         #how do i do this? 
@@ -139,3 +138,11 @@ def get_data_loaders(path_to_csv,
     test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
 
     return train_loader, val_loader, test_loader
+
+
+if __name__ == "__main__": 
+    train_loader, val_loader, test_loader = get_data_loaders("DS1.csv")
+    for i in train_loader:
+        print(i) 
+
+                   

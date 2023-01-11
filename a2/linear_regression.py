@@ -166,17 +166,21 @@ if __name__ == "__main__":
       preds = model(input)
     
       loss = loss_fn(preds, y)
+      print("test loss = " + loss)
 
     for batch_index, (input_t, y) in enumerate(val_loader):
     
       preds = model(input)
     
       loss = loss_fn(preds, y)
+      print("val loss = " + loss)
+
     #
     ## You don't need to do loss.backward() or optimizer.step() here since you are no
     ## longer training.
 
     #pass
+
 
 def plot_data2(w1, w2, b):
     data2 = pd.read_csv('data/DS2.csv')
