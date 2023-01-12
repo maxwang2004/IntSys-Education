@@ -177,7 +177,7 @@ if __name__ == "__main__":
     # Eg:
     model.train()
     #define total time steps
-    TOTAL_TIME_STEPS = 64 #increase if runs 
+    TOTAL_TIME_STEPS = 1000 #increase if runs 
     for t in range(TOTAL_TIME_STEPS):
       for batch_index, (input_t, y) in enumerate(train_loader):
         optimizer.zero_grad()
@@ -218,9 +218,9 @@ if __name__ == "__main__":
     w, b = model.parameters()
     w1 = w[0,0]
     w2 = w[0,1]
-    print(w1)
+    print(type(w1))
     print(b)
-    plot_data1(w1,w2,b)
+    plot_data1(w1.detach().numpy(),w2.detach().numpy(),b.detach().numpy())
     #
     ## You don't need to do loss.backward() or optimizer.step() here since you are no
     ## longer training.
