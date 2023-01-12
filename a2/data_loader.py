@@ -2,6 +2,7 @@ import csv
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, SubsetRandomSampler
 import pandas as pd
+import torch
 
 
 class SimpleDataset(Dataset):
@@ -16,7 +17,6 @@ class SimpleDataset(Dataset):
         ## TODO: Add code to read csv and load data. 
         ## You should store the data in a field.
         # Eg (on how to read .csv files):
-
         # self.dataset = {}
         # with open('path/to/.csv', 'r') as f:
         #    csvreader = csv.reader(f)
@@ -29,7 +29,7 @@ class SimpleDataset(Dataset):
         ## Look up how to read .csv files using Python. This is common for datasets in projects.
         
         #or use this? 
-        self.dataset = pd.read_csv(path_to_csv)
+        self.dataset = pd.read_csv(path_to_csv, header = None, names = ['x1','x2','y'])
 
         #checkout pytorch data loaders
 
@@ -42,7 +42,7 @@ class SimpleDataset(Dataset):
         [extended_summary]
         """
         ## TODO: Returns the length of the dataset.
-        return len(self.dataset)
+        return len(self.dataset)-1
         #pass
 
     def __getitem__(self, index):
@@ -59,27 +59,21 @@ class SimpleDataset(Dataset):
         ## Before returning your sample, you should check if there is a transform
         ## sepcified, and pply that transform to your sample
         # Eg:
-        #this?
-       
-       #changed using iloc, I didn't add a header to the dataset so I think it uses row number
-        train_x = self.dataset.iloc[index, 0:2]
-        train_y = self.dataset.iloc[index, 2]
-
-        # train_x = self.dataset['x'][index]
-        # train_y = self.dataset['y'][index]
+        train_x = self.dataset.iloc[index][:2] 
+        train_y = self.dataset.iloc[index][1:2]
+        #fixed based on feedback
 
         train_x = torch.tensor(train_x.values)
         train_y = torch.tensor(train_y.values)
 
         sample = (train_x,train_y)
+
         if self.transform:
-            sample = self.transform(sample)
-
-        return sample
-        ## Remember to convert the x and y into torch tensors.
-        #how do i do this? 
+           sample = self.transform(sample)
         
-
+        return (sample)
+        ## Remember to convert the x and y into torch tensors.
+    
        # pass
 
 
@@ -112,19 +106,19 @@ def get_data_loaders(path_to_csv,
 
     ## BEGIN: YOUR CODE
     
-    #ex. size == 100, train num = 80, test num = 20, val num = 4
-    train_num = round(train_val_test[0]*dataset_size) # not sure if this is accurate though lol - yea lol idk either shouldnt it be random?
-    test_num = round(train_val_test[1]*dataset_size) # in example this would be 0.2 * size
-    val_num = round(train_val_test[2]*test_num) #
+    ## Travis's comment: U want to first get a train_test_split by retrieving the indices 
+    ## for train and indices for test. And then from there within the train indices, retrieve 
+    ## a portion of it for val
+    
+    train_num = round(train_val_test[0]*dataset_size) 
+    test_num = round(train_val_test[1]*dataset_size)
+    valid_num = round(train_val_test[2]*train_num) # fixed, but not sure
 
+    train_indices = indices[:train_num]
+    test_indices = indices[-test_num:]
+    val_indices = train_indices[-valid_num:] #not sure
 
-    train_indices = dataset[test_num:]
-    val_indices = dataset[:val_num]
-    test_indices = dataset[val_num:test_num]
-    # changed – is this right? I based it on the example I defined
-
-
-
+    
     ## END: YOUR CODE
 
     # Now, we define samplers for each of the train, val and test data
@@ -139,10 +133,7 @@ def get_data_loaders(path_to_csv,
 
     return train_loader, val_loader, test_loader
 
-
-if __name__ == "__main__": 
-    train_loader, val_loader, test_loader = get_data_loaders("DS1.csv")
-    for i in train_loader:
-        print(i) 
-
-                   
+if __name__ == "__main__":
+    train_load = get_data_loaders("data/DS1.csv")
+    for i in enumerate(train_load):
+        print(i)
