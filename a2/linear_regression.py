@@ -159,7 +159,7 @@ if __name__ == "__main__":
     ## Here you will want to create the relevant dataloaders for the csv files for which 
     ## you think you should use Linear Regression. The syntax for doing this is something like:
     # Eg:
-    train_loader, val_loader, test_loader = get_data_loaders("data/DS1.csv", #WHAT DATA TO TRAIN ON 
+    train_loader, val_loader, test_loader = get_data_loaders("data/DS2.csv", #WHAT DATA TO TRAIN ON 
                         transform_fn=data_transform  # Can also pass in None here
     )
                         # train_val_test=[TRAIN/VAL/TEST SPLIT], 
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     # Eg:
     model.train()
     #define total time steps
-    TOTAL_TIME_STEPS = 1000 #increase if runs 
+    TOTAL_TIME_STEPS = 1 #increase if runs 
     for t in range(TOTAL_TIME_STEPS):
       for batch_index, (input_t, y) in enumerate(train_loader):
         optimizer.zero_grad()
@@ -185,7 +185,7 @@ if __name__ == "__main__":
         preds = model(input_t.float())
           #Feed the input to the model
     
-        loss = mae_loss(preds, y)  # You might have to change the shape of things here.
+        loss = mse_loss(preds, y.float())  # You might have to change the shape of things here.
         
         loss.backward() 
         optimizer.step()
@@ -201,7 +201,7 @@ if __name__ == "__main__":
     
       preds = model(input_t.float())
     
-      loss = mae_loss(preds, y)
+      loss = mse_loss(preds, y)
       print("test loss:")
       print(loss)
       print("----")
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     
       preds = model(input_t.float())
     
-      loss = mae_loss(preds, y)
+      loss = mse_loss(preds, y)
       print("val loss:")
       print(loss)
       print("----")
@@ -220,7 +220,7 @@ if __name__ == "__main__":
     w2 = w[0,1]
     print(type(w1))
     print(b)
-    plot_data1(w1.detach().numpy(),w2.detach().numpy(),b.detach().numpy())
+    plot_data2(w1.detach().numpy(),w2.detach().numpy(),b.detach().numpy())
     #
     ## You don't need to do loss.backward() or optimizer.step() here since you are no
     ## longer training.
