@@ -9,9 +9,7 @@ import matplotlib.pyplot as plt
 
 class LinearRegressionModel(nn.Module):
     """LinearRegressionModel is the linear regression regressor.
-
     This class handles only the standard linear regression task.
-
     :param num_param: The number of parameters that need to be initialized.
     :type num_param: int
     """
@@ -31,7 +29,6 @@ class LinearRegressionModel(nn.Module):
         
         .. highlight:: python
         .. code-block:: python
-
             model = LinearRegressionModel(1, mse_loss)
             predictions = model(X)
     
@@ -42,7 +39,7 @@ class LinearRegressionModel(nn.Module):
         :rtype: torch.Tensor
         """
         ## TODO 2: Implement the linear regression on sample x
-        out = self.linear(x)
+        out = self.linear(x.float())
         return out
         #pass
 
@@ -52,7 +49,10 @@ def data_transform(sample):
     ## for changing the feature representation of your data so that Linear regression works
     ## better.
     x, y = sample
-    return sample  ## You might want to change this
+    torch.pow(x, 3)
+    return x,y  ## You might want to change this
+
+    # Travis' comment: Cube it?? try to fix it!! 
 
 
 def mse_loss(output, target):
@@ -60,13 +60,10 @@ def mse_loss(output, target):
     each element in the input :math:`output` and target :math:`target`.
     
     The loss can be described as:
-
     .. math::
         \\ell(x, y) = L = \\operatorname{mean}(\\{l_1,\\dots,l_N\\}^\\top), \\quad
         l_n = \\left( x_n - y_n \\right)^2,
-
     where :math:`N` is the batch size. 
-
     :math:`output` and :math:`target` are tensors of arbitrary shapes with a total
     of :math:`n` elements each.
     
@@ -96,13 +93,10 @@ def mae_loss(output, target):
     between each element in the input :math:`output` and target :math:`target`.
     
     The loss can be described as:
-
     .. math::
         \\ell(x, y) = L = \\operatorname{mean}(\\{l_1,\\dots,l_N\\}^\\top), \\quad
         l_n = \\left| x_n - y_n \\right|,
-
     where :math:`N` is the batch size. 
-
     :math:`output` and :math:`target` are tensors of arbitrary shapes with a total
     of :math:`n` elements each.
     
@@ -116,7 +110,8 @@ def mae_loss(output, target):
     ## TODO 4: Implement L1 loss. Use PyTorch operations.
     # Use PyTorch operations to return a PyTorch tensor.
     loss = nn.L1Loss()
-    return loss(output, target) # ... :< 
+    return loss(output, target)
+
 
     #pass
 
@@ -160,7 +155,9 @@ if __name__ == "__main__":
     ## you think you should use Linear Regression. The syntax for doing this is something like:
     # Eg:
     train_loader, val_loader, test_loader = get_data_loaders("data/DS2.csv", #WHAT DATA TO TRAIN ON 
-                        transform_fn=data_transform  # Can also pass in None here
+                     transform_fn=data_transform,
+                     train_val_test=[0.8, 0.2, 0.2], 
+                     batch_size=32  # Can also pass in None here
     )
                         # train_val_test=[TRAIN/VAL/TEST SPLIT], 
                         # batch_size=YOUR BATCH SIZE)
@@ -177,18 +174,20 @@ if __name__ == "__main__":
     # Eg:
     model.train()
     #define total time steps
-    TOTAL_TIME_STEPS = 1 #increase if runs 
+    TOTAL_TIME_STEPS = 16 #increase if runs 
     for t in range(TOTAL_TIME_STEPS):
       for batch_index, (input_t, y) in enumerate(train_loader):
-        optimizer.zero_grad()
+        #optimizer.zero_grad()
         #input and y are both tensors
         preds = model(input_t.float())
           #Feed the input to the model
     
-        loss = mse_loss(preds, y.float())  # You might have to change the shape of things here.
+        loss = mae_loss(preds, y.float())  # You might have to change the shape of things here.
         
         loss.backward() 
         optimizer.step()
+        optimizer.zero_grad()
+
         
     ## Don't worry about loss.backward() for now. Think of it as calculating gradients.
 
@@ -201,7 +200,7 @@ if __name__ == "__main__":
     
       preds = model(input_t.float())
     
-      loss = mse_loss(preds, y)
+      loss = mae_loss(preds, y.float())
       print("test loss:")
       print(loss)
       print("----")
@@ -210,7 +209,7 @@ if __name__ == "__main__":
     
       preds = model(input_t.float())
     
-      loss = mse_loss(preds, y)
+      loss = mae_loss(preds, y)
       print("val loss:")
       print(loss)
       print("----")
