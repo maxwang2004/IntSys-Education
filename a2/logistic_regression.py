@@ -5,7 +5,8 @@ import torch.nn.functional as F
 import numpy as np
 from data_loader import get_data_loaders
 import typing
-import matplotlib as plt
+import pandas as pd
+import matplotlib.pyplot as plt  
 
 
 class LogisticRegressionModel(nn.Module):
@@ -61,8 +62,7 @@ class MultinomialRegressionModel(nn.Module):
         super().__init__()
         ## TODO 3: Set up network
         # NOTE: THIS IS A BONUS AND IS NOT EXPECTED FOR YOU TO BE ABLE TO DO
-        self.linear = torch.Linear()
-        self.Sigmoid = torch.Sigmoid()
+        pass
 
     def forward(self, x):
         """forward generates the predictions for the input
@@ -74,7 +74,7 @@ class MultinomialRegressionModel(nn.Module):
         .. code-block:: python
             model = MultinomialRegressionModel(1, cross_entropy_loss)
             predictions = model(X)
-
+    
         :param x: Input array of shape (n_samples, n_features) which we want to
             evaluate on
         :type x: typing.Union[np.ndarray, torch.Tensor]
@@ -105,8 +105,10 @@ def logistic_loss(output, target):
     # TODO 2: Implement the logistic loss function from the slides using
     # pytorch operations
     first = torch.neg(torch.mul(target, torch.log10(output)))
-    second = torch.mul(torch.sub(1, target), torch.log10(output))
-    loss = torch.neg(first, second)
+    second = torch.mul(torch.sub(1, target)  , torch.log10(output) )
+    loss = torch.neg( first, second )
+
+
     return loss
 
 
