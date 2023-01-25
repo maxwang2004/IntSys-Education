@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 from data_loader import get_data_loaders
-import matplotlib as plt
 import pandas as pd
+import matplotlib.pyplot as plt  
 
 
 class LinearRegressionModel(nn.Module):
@@ -17,7 +17,7 @@ class LinearRegressionModel(nn.Module):
     def __init__(self, num_param):
         ## TODO 1: Set up network
         super(LinearRegressionModel, self).__init__()
-        self.linear = torch.nn.linear(num_param, 1) #what is number of outputs? 1
+        self.linear = torch.nn.Linear(num_param, 1) #what is number of outputs? 1
         #pass
         
 
@@ -39,7 +39,7 @@ class LinearRegressionModel(nn.Module):
         :rtype: torch.Tensor
         """
         ## TODO 2: Implement the linear regression on sample x
-        out = self.linear(x)
+        out = self.linear(x.float())
         return out
         #pass
 
@@ -50,6 +50,8 @@ def data_transform(sample):
     ## better.
     x, y = sample
     return sample  ## You might want to change this
+
+    # Travis' comment: Cube it?? try to fix it!! 
 
 
 def mse_loss(output, target):
@@ -80,7 +82,7 @@ def mse_loss(output, target):
     #     target.sub(output)
 
 
-    loss = nn.mse_loss()
+    loss = nn.MSELoss()
     return loss(output, target) # ... :>? 
     #pass
 
@@ -106,72 +108,12 @@ def mae_loss(output, target):
     """
     ## TODO 4: Implement L1 loss. Use PyTorch operations.
     # Use PyTorch operations to return a PyTorch tensor.
-    loss = torch.nn.l1
-    return loss(output, target) # ... :< 
+    loss = nn.L1Loss()
+    return loss(output, target)
+
 
     #pass
 
-
-if __name__ == "__main__":
-    ## Here you will want to create the relevant dataloaders for the csv files for which 
-    ## you think you should use Linear Regression. The syntax for doing this is something like:
-    # Eg:
-    train_loader, val_loader, test_loader = get_data_loaders(DS1.csv, #WHAT DATA TO TRAIN ON 
-                        transform_fn=data_transform  # Can also pass in None here
-    )
-                        # train_val_test=[TRAIN/VAL/TEST SPLIT], 
-                        # batch_size=YOUR BATCH SIZE)
-
-    ## Now you will want to initialise your Linear Regression model, using something like
-    # Eg:
-    model = LinearRegressionModel(2)
-
-    ## Then, you will want to define your optimizer (the thing that updates your model weights)
-    # Eg:
-    optimizer = optim.SGD(model.parameters(), lr=0.01)
-
-    ## Now, you can start your training loop:
-    # Eg:
-    model.train()
-    #define total time steps
-    TOTAL_TIME_STEPS = 1 #increase if runs 
-    for t in range(TOTAL_TIME_STEPS):
-      for batch_index, (input_t, y) in enumerate(train_loader):
-        optimizer.zero_grad()
-    
-        preds = model(input)
-          #Feed the input to the model
-    
-        loss = loss_fn(preds, y)  # You might have to change the shape of things here.
-        
-        loss.backward() 
-        optimizer.step()
-        
-    ## Don't worry about loss.backward() for now. Think of it as calculating gradients.
-
-    ## And voila, your model is trained. Now, use something similar to run your model on
-    ## the validation and test data loaders:
-    # Eg: 
-    model.eval()
-    #elias: do twice for val and test
-    for batch_index, (input_t, y) in enumerate(test_loader):
-    
-      preds = model(input)
-    
-      loss = loss_fn(preds, y) 
-
-
-    for batch_index, (input_t, y) in enumerate(val_loader):
-    
-      preds = model(input)
-    
-      loss = loss_fn(preds, y)
-
-    #
-    ## You don't need to do loss.backward() or optimizer.step() here since you are no
-    ## longer training.
-
-    #pass
 
 def plot_data2(w1, w2, b):
     data2 = pd.read_csv('data/DS2.csv')
@@ -185,7 +127,6 @@ def plot_data2(w1, w2, b):
     plt.ylabel('y')
 
     plt.show()
-
 
 def plot_data1(w1, w2, b):
     data1 = pd.read_csv('data/DS1.csv')
@@ -206,5 +147,78 @@ def plot_data1(w1, w2, b):
     ax.set_ylabel('x2')
     ax.set_zlabel('y')
 
-
     plt.show()
+
+if __name__ == "__main__":
+    ## Here you will want to create the relevant dataloaders for the csv files for which 
+    ## you think you should use Linear Regression. The syntax for doing this is something like:
+    # Eg:
+    train_loader, val_loader, test_loader = get_data_loaders("data/DS2.csv", #WHAT DATA TO TRAIN ON 
+                     transform_fn=None,
+                     train_val_test=[0.8, 0.2, 0.2], 
+                     batch_size=32  # Can also pass in None here
+    )
+                        # train_val_test=[TRAIN/VAL/TEST SPLIT], 
+                        # batch_size=YOUR BATCH SIZE)
+
+    ## Now you will want to initialise your Linear Regression model, using something like
+    # Eg:
+    model = LinearRegressionModel(2)
+
+    ## Then, you will want to define your optimizer (the thing that updates your model weights)
+    # Eg:
+    optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+    ## Now, you can start your training loop:
+    # Eg:
+    model.train()
+    #define total time steps
+    TOTAL_TIME_STEPS = 1000 #increase if runs 
+    for t in range(TOTAL_TIME_STEPS):
+      for batch_index, (input_t, y) in enumerate(train_loader):
+        optimizer.zero_grad()
+        #input and y are both tensors
+        preds = model(input_t.float())
+          #Feed the input to the model
+    
+        loss = mae_loss(preds, y.float())  # You might have to change the shape of things here.
+        
+        loss.backward() 
+        optimizer.step()
+        
+    ## Don't worry about loss.backward() for now. Think of it as calculating gradients.
+
+    ## And voila, your model is trained. Now, use something similar to run your model on
+    ## the validation and test data loaders:
+    # Eg: 
+    model.eval()
+    #elias: do twice for val and test
+    for batch_index, (input_t, y) in enumerate(test_loader):
+    
+      preds = model(input_t.float())
+    
+      loss = mae_loss(preds, y.float())
+      print("test loss:")
+      print(loss)
+      print("----")
+
+    for batch_index, (input_t, y) in enumerate(val_loader):
+    
+      preds = model(input_t.float())
+    
+      loss = mae_loss(preds, y)
+      print("val loss:")
+      print(loss)
+      print("----")
+
+    w, b = model.parameters()
+    w1 = w[0,0]
+    w2 = w[0,1]
+    print(type(w1))
+    print(b)
+    plot_data2(w1.detach().numpy(),w2.detach().numpy(),b.detach().numpy())
+    #
+    ## You don't need to do loss.backward() or optimizer.step() here since you are no
+    ## longer training.
+
+    #pass
