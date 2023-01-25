@@ -71,6 +71,7 @@ class SimpleDataset(Dataset):
         if self.transform:
            sample = self.transform(sample)
         
+        
         return (sample)
         ## Remember to convert the x and y into torch tensors.
     
@@ -109,18 +110,21 @@ def get_data_loaders(path_to_csv,
     ## Travis's comment: U want to first get a train_test_split by retrieving the indices 
     ## for train and indices for test. And then from there within the train indices, retrieve 
     ## a portion of it for val
-    
+
     train_num = round(train_val_test[0]*dataset_size) 
     test_num = round(train_val_test[1]*dataset_size)
     valid_num = round(train_val_test[2]*train_num) # fixed, but not sure
-
+    
+    np.random.shuffle(indices)
     train_indices = indices[:train_num]
     test_indices = indices[-test_num:]
     val_indices = train_indices[-valid_num:] #not sure
 
+    # train_val_indices = indices[:train_num]
+    # test_indices = dataset [train_num:]
+    # train_indices = train_val_indices [-valid_num:]
+    # val_indices = train_val_indices[:valid_num]
     
-
-
     ## END: YOUR CODE
 
     # Now, we define samplers for each of the train, val and test data
@@ -134,3 +138,8 @@ def get_data_loaders(path_to_csv,
     test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
 
     return train_loader, val_loader, test_loader
+
+if __name__ == "__main__":
+    train_load = get_data_loaders("data/DS1.csv")
+    for i in enumerate(train_load):
+        print(i)
